@@ -7,6 +7,14 @@ class Scope:
 
 VERSIONS = [1, 2, 3]
 
+FILES = {
+    "py": ".py",
+    "sql": ".sql",
+    "png": ".png",
+    "json": ".json",
+    "bin": ".bin"
+}
+
 
 class Metadata:
     """Metadata ignition project resource"""
@@ -16,6 +24,7 @@ class Metadata:
         "_version",
         "_restricted",
         "_overridable",
+        "_files",
     ]
 
     def __init__(self, metadata: dict) -> None:
@@ -23,7 +32,7 @@ class Metadata:
         self._version = self._version_validation(metadata["version"])
         self._restricted = self._restricted_validation(metadata["restricted"])
         self._overridable = self._overridable_validation(metadata["overridable"])
-        # self._files = metadata["files"]
+        self._files = self._files_validation(metadata["files"])
         # self._attributes = metadata["attributes"]
 
     def _scope_validation(self, scope: str) -> str:
@@ -87,6 +96,27 @@ class Metadata:
     @overridable.setter
     def overridable(self, value: bool) -> None:
         self._overridable = self._overridable_validation(value)
+    
+    def _files_validation(self, files: list) -> list:
+        assert isinstance(
+            files, list
+        ), f"{files} is not a list object"
+
+        for file in files:
+            assert isinstance(file, str), f"{file} is not a file name (str)"
+            assert "." in file, f"{file} has no extension"
+            extension = file.split(".")[-1]
+            assert extension in FILES, f"{extension} is not a valid extension"
+
+        return files
+    
+    @property
+    def files(self) -> list:
+        return self._files
+
+    @files.setter
+    def files(self, value: list) -> None:
+        self._files = self._files_validation(value)
 
 # TODO: delete this
 """
