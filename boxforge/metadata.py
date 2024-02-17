@@ -19,8 +19,19 @@ class Metadata:
         "_data",
     ]
 
-    # TODO: implement default metadata
-    def __init__(self, metadata: dict) -> None:
+    def __init__(self, metadata: dict = {}) -> None:
+        if not metadata:
+            deafult_metadata = {
+                "scope": "G",
+                "version": 1,
+                "restricted": False,
+                "overridable": True,
+                "files": [],
+                "attributes": {},
+            }
+
+            metadata = deafult_metadata
+        
         self._scope = self._scope_validation(metadata["scope"])
         self._version = self._version_validation(metadata["version"])
         self._restricted = self._restricted_validation(metadata["restricted"])
