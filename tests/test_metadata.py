@@ -136,9 +136,23 @@ class TestMetadata(unittest.TestCase):
                 continue
 
     def test_metadata_dtype_attributes(self):
-        raise Exception("No tests yet")
-        # TODO
+        # TODO: add data validations for attributes and methods
+        # for data manipulation
+        attritbutes = {
+            "lastModification": {
+                "actor":"admin",
+                "timestamp": "2024-01-30T12:07:04Z"
+            },
+            "lastModificationSignature": "c4a1d2e9350072aa27ed65f9bb254bba28d48c1c5365a9fb6130cc8595e934a1"
+        }
+        self.metadata.attributes = attritbutes
+        self.assertDictEqual(self.metadata.attributes, attritbutes)
 
     def tearDown(self) -> None:
         if os.path.isfile(self.path):
             os.remove(self.path)
+
+
+class TestAttributes(unittest.TestCase):
+    def test_attributes_last_modification(self):
+        raise Exception("No tests yet")
