@@ -67,6 +67,7 @@ class TestMetadata(unittest.TestCase):
             "T",
             "TAWD",
             "TAWDS",
+            1
         ]
         for case in wrong_values:
             try:

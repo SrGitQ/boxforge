@@ -20,6 +20,7 @@ class Metadata:
         # self._attributes = metadata["attributes"]
     
     def _scope_validation(self, scope: str):
+        assert isinstance(scope, str), f"Scope is not an string object: {scope}"
         assert len(scope) == 1, f"Scope is larger or shorter than single char: {scope}"
         assert scope.isupper(), f"Scope should be upper: {scope}"
         assert hasattr(Scope, scope), f"Invalid Scope value: {scope}"
