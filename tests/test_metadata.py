@@ -29,7 +29,7 @@ class TestMetadata(unittest.TestCase):
         self.metadata = Metadata(metadata)
         self.metadata_test = metadata_test
 
-        self.path = "tmp/metadata.json"
+        self.path = "tmp/package"
 
     def test_metadata(self):
         self.assertDictEqual(self.metadata.to_dict(), self.metadata_test)
@@ -48,11 +48,12 @@ class TestMetadata(unittest.TestCase):
     def test_metadata_file(self):
         self.metadata.forge(self.path)
 
-        self.assertTrue(os.path.isfile(self.path))
+        metadata_path = self.path + "/resource.json"
+        self.assertTrue(os.path.isfile(metadata_path))
 
-        with open(self.path, "r") as file:
-            data = json.load(file)
-            self.assertEqual(data, json.dumps(self.metadata_test))
+        with open(metadata_path, "r") as file:
+            data = file.read()
+            self.assertEqual(str(data), json.dumps(self.metadata_test, indent=4))
 
     def test_metadata_dtype_scope_all(self):
         self.metadata.scope = "A"
