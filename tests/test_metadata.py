@@ -31,6 +31,17 @@ class TestMetadata(unittest.TestCase):
 
         self.path = "tmp/package"
 
+    def test_default_metadata(self):
+        default_metadata_test = {
+            "scope": "G",
+            "version": 1,
+            "restricted": False,
+            "overridable": True,
+            "files": [],
+            "attributes": {},
+        }
+        self.assertDictEqual(Metadata().to_dict(), default_metadata_test)
+
     def test_metadata(self):
         self.assertDictEqual(self.metadata.to_dict(), self.metadata_test)
 
