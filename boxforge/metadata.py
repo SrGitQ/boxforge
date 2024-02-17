@@ -1,5 +1,6 @@
 from boxforge.definitions import FILES, VERSIONS, Scope
 from typing import Any
+import json
 
 
 class Metadata:
@@ -33,6 +34,9 @@ class Metadata:
             "attributes": self.attributes,
         }
     
+    def dump(self) -> str:
+        return json.dumps(self.to_dict())
+
     def __getitem__(self, key: str) -> Any:
         return self._data[key]
     
