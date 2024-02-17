@@ -35,7 +35,7 @@ class TestMetadata(unittest.TestCase):
         self.assertDictEqual(self.metadata.to_dict(), self.metadata_test)
 
     def test_metadata_json(self):
-        self.assertEqual(self.metadata.dump(), json.dumps(self.metadata_test))
+        self.assertEqual(self.metadata.dump(), json.dumps(self.metadata_test, indent=4))
     
     def test_metadata_access(self):
         self.metadata["scope"]
