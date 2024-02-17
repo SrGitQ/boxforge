@@ -1,6 +1,7 @@
-from boxforge.definitions import FILES, VERSIONS, Scope
+from boxforge.definitions import FILES, VERSIONS, Scope, IgnitionReference
 from typing import Any
 import json
+import pathlib
 
 
 class Metadata:
@@ -33,9 +34,18 @@ class Metadata:
             "files": self.files,
             "attributes": self.attributes,
         }
-    
+
+    def forge(self, path: str) -> None:
+        current_path = pathlib.Path(path)
+        current_path.mkdir(parents=True, exist_ok=True)
+
+        metadata_path = str(current_path)+"/"+IgnitionReference.MetadataFileName
+        print(metadata_path)
+        with open(metadata_path, "w+") as file:
+            file.write(self.dump())
+
     def dump(self) -> str:
-        return json.dumps(self.to_dict())
+        return json.dumps(self.to_dict(), indent=4)
 
     def __getitem__(self, key: str) -> Any:
         return self._data[key]
