@@ -86,9 +86,13 @@ class TestMetadata(unittest.TestCase):
     def test_metadata_dtype_version_invalid(self):
         versions = [-1, 0, 4, 5, 6, 7]
         for version in versions:
-            self.metadata.version = version
-            if self.metadata.version in versions:
-                raise Exception("This case should be avoided")
+            try:
+                self.metadata.version = version
+                raise ValueError
+            except Exception as e:
+                if not isinstance(e, AssertionError):
+                    raise Exception("This case should be avoided")
+                continue
 
     def test_metadata_dtype_restricted(self):
         self.metadata.restricted = True

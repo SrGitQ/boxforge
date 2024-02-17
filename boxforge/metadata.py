@@ -4,16 +4,19 @@ class Scope:
     C = "Client"
     G = "Gateway"
 
+VERSIONS = [1, 2, 3]
+
 class Metadata:
     """Metadata ignition project resource"""
 
     __slots__ = [
         "_scope",
+        "_version",
     ]
 
     def __init__(self, metadata):
         self._scope = self._scope_validation(metadata["scope"])
-        # self._version = metadata["version"]
+        self._version = self._version_validation(metadata["version"])
         # self._restricted = metadata["restricted"]
         # self._overridable = metadata["overridable"]
         # self._files = metadata["files"]
@@ -33,6 +36,18 @@ class Metadata:
     @scope.setter
     def scope(self, value):
         self._scope = self._scope_validation(value)
+    
+    def _version_validation(self, version: int):
+        assert isinstance(version, int), f"{version} is not integer value"
+        assert version in VERSIONS, f"Version number {version} is out of the valid range"
+
+    @property
+    def version(self):
+        return self.version
+    
+    @version.setter
+    def version(self, value):
+        self._version = self._version_validation(value)
 
 
     
