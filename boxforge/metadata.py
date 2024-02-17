@@ -48,6 +48,9 @@ class Metadata:
 
     def __len__(self):
         return len(self._data)
+    
+    def to_dict(self) -> dict:
+        return self._data
 
     def _scope_validation(self, scope: str) -> str:
         assert isinstance(scope, str), f"Scope is not an string object: {scope}"
