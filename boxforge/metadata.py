@@ -15,13 +15,14 @@ class Metadata:
         "_scope",
         "_version",
         "_restricted",
+        "_overridable",
     ]
 
     def __init__(self, metadata: dict) -> None:
         self._scope = self._scope_validation(metadata["scope"])
         self._version = self._version_validation(metadata["version"])
         self._restricted = self._restricted_validation(metadata["restricted"])
-        # self._overridable = metadata["overridable"]
+        self._overridable = self._overridable_validation(metadata["overridable"])
         # self._files = metadata["files"]
         # self._attributes = metadata["attributes"]
 
@@ -72,6 +73,20 @@ class Metadata:
     def restricted(self, value: bool) -> None:
         self._restricted = self._restricted_validation(value)
 
+    def _overridable_validation(self, overridable: bool) -> bool:
+        assert isinstance(
+            overridable, bool
+        ), f"{overridable} is not a bool object or value"
+
+        return overridable
+
+    @property
+    def overridable(self) -> bool:
+        return self._overridable
+
+    @overridable.setter
+    def overridable(self, value: bool) -> None:
+        self._overridable = self._overridable_validation(value)
 
 # TODO: delete this
 """
