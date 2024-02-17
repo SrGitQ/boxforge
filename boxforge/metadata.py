@@ -19,6 +19,7 @@ class Metadata:
         "_data",
     ]
 
+    # TODO: implement default metadata
     def __init__(self, metadata: dict) -> None:
         self._scope = self._scope_validation(metadata["scope"])
         self._version = self._version_validation(metadata["version"])
