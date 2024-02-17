@@ -1,4 +1,5 @@
 from boxforge.definitions import FILES, VERSIONS, Scope
+from typing import Any
 
 
 class Metadata:
@@ -11,6 +12,7 @@ class Metadata:
         "_overridable",
         "_files",
         "_attributes",
+        "_data",
     ]
 
     def __init__(self, metadata: dict) -> None:
@@ -21,6 +23,31 @@ class Metadata:
         self._files = self._files_validation(metadata["files"])
         # TODO: attributes must be their own constructor and tests
         self._attributes = self._attributes_validation(metadata["attributes"])
+
+        self._data = {
+            "scope": self.scope,
+            "version": self.version,
+            "restricted": self.restricted,
+            "overridable": self.overridable,
+            "files": self.files,
+            "attributes": self.attributes,
+        }
+    
+    def __getitem__(self, key: str) -> Any:
+        return self._data[key]
+    
+    def __setitem__(self, key, value) -> None:
+        self.__setattr__(key, value)
+        self._data[key] = value
+
+    def __delitem__(self, key) -> None:
+        return
+    
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
 
     def _scope_validation(self, scope: str) -> str:
         assert isinstance(scope, str), f"Scope is not an string object: {scope}"

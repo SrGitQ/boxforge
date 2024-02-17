@@ -35,7 +35,6 @@ class TestMetadata(unittest.TestCase):
         self.assertDictEqual(self.metadata, self.metadata_test)
 
     def test_metadata_json(self):
-        #print(self.metadata.dump())
         self.assertEqual(self.metadata.dump(), json.dumps(self.metadata_test))
     
     def test_metadata_access(self):
