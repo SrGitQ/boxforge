@@ -1,0 +1,3 @@
+class PythonScript:
+    """Ignition python script, python 2.7 -- Jython 2.7"""
+    ...
