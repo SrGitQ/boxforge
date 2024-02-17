@@ -1,7 +1,9 @@
-from boxforge.definitions import FILES, VERSIONS, Scope, IgnitionReference
-from typing import Any
 import json
 import pathlib
+
+from boxforge.definitions import FILES, VERSIONS, Scope, IgnitionReference
+
+from typing import Any
 
 
 class Metadata:
@@ -36,35 +38,50 @@ class Metadata:
         }
 
     def forge(self, path: str) -> None:
+        """Build resource.json given the path
+        ### params
+        path: str
+
+        ### return:
+        file output
+        """
         current_path = pathlib.Path(path)
         current_path.mkdir(parents=True, exist_ok=True)
 
-        metadata_path = str(current_path)+"/"+IgnitionReference.MetadataFileName
+        metadata_path = str(current_path) + "/" + IgnitionReference.MetadataFileName
         print(metadata_path)
         with open(metadata_path, "w+") as file:
             file.write(self.dump())
 
     def dump(self) -> str:
+        """Return a JSON string
+        ### params
+
+
+        ### return:
+        JSON string
+        """
         return json.dumps(self.to_dict(), indent=4)
+
+    def to_dict(self) -> dict:
+        """Convert to dict"""
+        return self._data
 
     def __getitem__(self, key: str) -> Any:
         return self._data[key]
-    
+
     def __setitem__(self, key, value) -> None:
         self.__setattr__(key, value)
         self._data[key] = value
 
     def __delitem__(self, key) -> None:
         return
-    
+
     def __iter__(self):
         return iter(self._data)
 
     def __len__(self):
         return len(self._data)
-    
-    def to_dict(self) -> dict:
-        return self._data
 
     def _scope_validation(self, scope: str) -> str:
         assert isinstance(scope, str), f"Scope is not an string object: {scope}"

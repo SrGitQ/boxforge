@@ -8,5 +8,6 @@ VERSIONS = [1, 2, 3]
 
 FILES = {"py": ".py", "sql": ".sql", "png": ".png", "json": ".json", "bin": ".bin"}
 
+
 class IgnitionReference:
     MetadataFileName = "resource.json"
