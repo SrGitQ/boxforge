@@ -1,19 +1,4 @@
-# TODO: refactor this
-class Scope:
-    A = "All"
-    C = "Client"
-    G = "Gateway"
-
-
-VERSIONS = [1, 2, 3]
-
-FILES = {
-    "py": ".py",
-    "sql": ".sql",
-    "png": ".png",
-    "json": ".json",
-    "bin": ".bin"
-}
+from boxforge.definitions import FILES, VERSIONS, Scope
 
 
 class Metadata:
@@ -25,7 +10,7 @@ class Metadata:
         "_restricted",
         "_overridable",
         "_files",
-        "_attributes"
+        "_attributes",
     ]
 
     def __init__(self, metadata: dict) -> None:
@@ -98,11 +83,9 @@ class Metadata:
     @overridable.setter
     def overridable(self, value: bool) -> None:
         self._overridable = self._overridable_validation(value)
-    
+
     def _files_validation(self, files: list) -> list:
-        assert isinstance(
-            files, list
-        ), f"{files} is not a list object"
+        assert isinstance(files, list), f"{files} is not a list object"
 
         for file in files:
             assert isinstance(file, str), f"{file} is not a file name (str)"
@@ -111,7 +94,7 @@ class Metadata:
             assert extension in FILES, f"{extension} is not a valid extension"
 
         return files
-    
+
     @property
     def files(self) -> list:
         return self._files
@@ -119,28 +102,16 @@ class Metadata:
     @files.setter
     def files(self, value: list) -> None:
         self._files = self._files_validation(value)
-    
+
     def _attributes_validation(self, attributes: dict) -> dict:
         assert isinstance(attributes, dict), f"{attributes} is not dict object"
-        
+
         return attributes
-    
+
     @property
     def attributes(self) -> dict:
         return self._attributes
-    
+
     @attributes.setter
     def attributes(self, value) -> None:
         self._attributes = self._attributes_validation(value)
-
-# TODO: delete this
-"""
-{
-    "scope": "A",
-    "version": 1,
-    "restricted": False,
-    "overridable": True,
-    "files": ["code.py"],
-    "attributes": {},
-}
-"""
