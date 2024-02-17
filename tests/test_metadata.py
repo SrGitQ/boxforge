@@ -127,9 +127,13 @@ class TestMetadata(unittest.TestCase):
 
         self.assertIsInstance(self.metadata.files, list)
         for fault in wrong_values:
-            self.metadata.files = fault
-            if self.metadata.files in wrong_values:
-                raise Exception("This case should be avoided")
+            try:
+                self.metadata.files = fault
+                raise ValueError
+            except Exception as e:
+                if not isinstance(e, AssertionError):
+                    raise Exception("This case should be avoided")
+                continue
 
     def test_metadata_dtype_attributes(self):
         raise Exception("No tests yet")
