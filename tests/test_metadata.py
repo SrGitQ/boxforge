@@ -114,9 +114,13 @@ class TestMetadata(unittest.TestCase):
 
         wrong_values = [1, 1.0, "false", "true", [], {}]
         for fault in wrong_values:
-            self.metadata.overridable = fault
-            if self.metadata.overridable in wrong_values:
-                raise Exception("This case should be avoided")
+            try:
+                self.metadata.overridable = fault
+                raise ValueError
+            except Exception as e:
+                if not isinstance(e, AssertionError):
+                    raise Exception("This case should be avoided")
+                continue
 
     def test_metadata_dtype_files_invalid(self):
         wrong_values = [1, 1.0, {}, [1], True, False]
