@@ -32,7 +32,7 @@ class TestMetadata(unittest.TestCase):
         self.path = "tmp/metadata.json"
 
     def test_metadata(self):
-        self.assertDictEqual(self.metadata, self.metadata_test)
+        self.assertDictEqual(self.metadata.to_dict(), self.metadata_test)
 
     def test_metadata_json(self):
         self.assertEqual(self.metadata.dump(), json.dumps(self.metadata_test))
