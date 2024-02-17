@@ -12,12 +12,13 @@ class Metadata:
     __slots__ = [
         "_scope",
         "_version",
+        "_restricted",
     ]
 
     def __init__(self, metadata):
         self._scope = self._scope_validation(metadata["scope"])
         self._version = self._version_validation(metadata["version"])
-        # self._restricted = metadata["restricted"]
+        self._restricted = self._restricted_validation(metadata["restricted"])
         # self._overridable = metadata["overridable"]
         # self._files = metadata["files"]
         # self._attributes = metadata["attributes"]
@@ -48,6 +49,17 @@ class Metadata:
     @version.setter
     def version(self, value):
         self._version = self._version_validation(value)
+    
+    def _restricted_validation(self, restricted: bool):
+        assert isinstance(restricted, bool), f"{restricted} is not a bool object or value"
+    
+    @property
+    def restricted(self) -> bool:
+        return self._restricted
+
+    @restricted.setter
+    def restricted(self, value):
+        self._restricted = self._restricted_validation(value)
 
 
     
