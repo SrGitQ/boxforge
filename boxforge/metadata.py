@@ -25,6 +25,7 @@ class Metadata:
         "_restricted",
         "_overridable",
         "_files",
+        "_attributes"
     ]
 
     def __init__(self, metadata: dict) -> None:
@@ -33,7 +34,8 @@ class Metadata:
         self._restricted = self._restricted_validation(metadata["restricted"])
         self._overridable = self._overridable_validation(metadata["overridable"])
         self._files = self._files_validation(metadata["files"])
-        # self._attributes = metadata["attributes"]
+        # TODO: attributes must be their own constructor and tests
+        self._attributes = self._attributes_validation(metadata["attributes"])
 
     def _scope_validation(self, scope: str) -> str:
         assert isinstance(scope, str), f"Scope is not an string object: {scope}"
@@ -117,6 +119,19 @@ class Metadata:
     @files.setter
     def files(self, value: list) -> None:
         self._files = self._files_validation(value)
+    
+    def _attributes_validation(self, attributes: dict) -> dict:
+        assert isinstance(attributes, dict), f"{attributes} is not dict object"
+        
+        return attributes
+    
+    @property
+    def attributes(self) -> dict:
+        return self._attributes
+    
+    @attributes.setter
+    def attributes(self, value) -> None:
+        self._attributes = self._attributes_validation(value)
 
 # TODO: delete this
 """
