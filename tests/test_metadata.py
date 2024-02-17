@@ -35,7 +35,16 @@ class TestMetadata(unittest.TestCase):
         self.assertDictEqual(self.metadata, self.metadata_test)
 
     def test_metadata_json(self):
+        #print(self.metadata.dump())
         self.assertEqual(self.metadata.dump(), json.dumps(self.metadata_test))
+    
+    def test_metadata_access(self):
+        self.metadata["scope"]
+        self.metadata["version"]
+        self.metadata["restricted"]
+        self.metadata["overridable"]
+        self.metadata["files"]
+        self.metadata["attributes"]
 
     def test_metadata_file(self):
         self.metadata.forge(self.path)
