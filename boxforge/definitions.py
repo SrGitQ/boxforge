@@ -4,10 +4,8 @@ class Scope:
     G = "Gateway"
 
 
-VERSIONS = [1, 2, 3]
-
-FILES = {"py": ".py", "sql": ".sql", "png": ".png", "json": ".json", "bin": ".bin"}
-
-
-class IgnitionReference:
-    MetadataFileName = "resource.json"
+class Ignition:
+    metadata_file_name = "resource.json"
+    versions = [1, 2, 3]
+    scope = Scope
+    files = {"py": ".py", "sql": ".sql", "png": ".png", "json": ".json", "bin": ".bin"}

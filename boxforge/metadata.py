@@ -1,7 +1,7 @@
 import json
 import pathlib
 
-from boxforge.definitions import FILES, VERSIONS, Scope, IgnitionReference
+from boxforge.definitions import Ignition
 
 from typing import Any
 
@@ -60,7 +60,7 @@ class Metadata:
         current_path = pathlib.Path(path)
         current_path.mkdir(parents=True, exist_ok=True)
 
-        metadata_path = str(current_path) + "/" + IgnitionReference.MetadataFileName
+        metadata_path = str(current_path) + "/" + Ignition.metadata_file_name
         print(metadata_path)
         with open(metadata_path, "w+") as file:
             file.write(self.dump())
@@ -99,7 +99,7 @@ class Metadata:
         assert isinstance(scope, str), f"Scope is not an string object: {scope}"
         assert len(scope) == 1, f"Scope is larger or shorter than single char: {scope}"
         assert scope.isupper(), f"Scope should be upper: {scope}"
-        assert hasattr(Scope, scope), f"Invalid Scope value: {scope}"
+        assert hasattr(Ignition.scope, scope), f"Invalid Scope value: {scope}"
 
         return scope
 
@@ -114,7 +114,7 @@ class Metadata:
     def _version_validation(self, version: int) -> int:
         assert isinstance(version, int), f"{version} is not integer value"
         assert (
-            version in VERSIONS
+            version in Ignition.versions
         ), f"Version number {version} is out of the valid range"
 
         return version
@@ -164,7 +164,7 @@ class Metadata:
             assert isinstance(file, str), f"{file} is not a file name (str)"
             assert "." in file, f"{file} has no extension"
             extension = file.split(".")[-1]
-            assert extension in FILES, f"{extension} is not a valid extension"
+            assert extension in Ignition.files, f"{extension} is not a valid extension"
 
         return files
 
