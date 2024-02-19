@@ -47,6 +47,24 @@ class PythonScript(ElementInterface):
     @script_path.setter
     def script_path(self, path:str) -> None:
         self._data["script_path"] = self._validate(key="script_path", value=path, data=self)
+    
+    def _name_validation(self, name:str) -> str:
+        assert isinstance(name, str), f"{name} is not a string or path object"
+
+        import re
+        name_regex = r"[a-zA-Z0-9\_]"
+        if re.match(name_regex, name):
+            return name
+        else:
+            raise TypeError
+
+    @property
+    def name(self) -> str:
+        return self["name"]
+    
+    @name.setter
+    def name(self, name: str) -> name:
+        self._data["name"] = self._validate(key="name", value=name, data=self)
 
 
 class PythonModule(ElementInterface):
