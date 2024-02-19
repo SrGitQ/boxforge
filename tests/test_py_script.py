@@ -10,14 +10,13 @@ class TestPythonScript(unittest.TestCase):
         self.script_path = "tmp/script.py"
 
     def test_python_script_resume(self):
-        resume_test = """** Ignition Python Script **\n:::name\nscript\n::: code\nvariable = 12\n\n::: resource\n{\n    "scope": "G",\n    "version": 1,\n    "restricted": False,\n    "overridable": True,\n    "files": [],\n    "attributes": {},\n}"""
+        resume_test = """** Ignition Python Script **\n:::name\nscript\n::: code\nvariable = 12\n\n::: resource\n{\n    "scope": "G",\n    "version": 1,\n    "restricted": false,\n    "overridable": true,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {}\n}"""
 
         script = PythonScript(path=self.script_path)
-
         self.assertEqual(resume_test, script.resume())
 
     def test_python_script_path(self):
-        resume_test = """** Ignition Python Script **\n:::name\nscript\n::: code\nvariable = 12\n\n::: resource\n{\n    "scope": "G",\n    "version": 1,\n    "restricted": False,\n    "overridable": True,\n    "files": [],\n    "attributes": {},\n}"""
+        resume_test = """** Ignition Python Script **\n:::name\nscript\n::: code\nvariable = 12\n\n::: resource\n{\n    "scope": "G",\n    "version": 1,\n    "restricted": false,\n    "overridable": true,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {}\n}"""
         script = PythonScript(path=self.script_path)
 
         self.assertEqual(resume_test, script.resume())

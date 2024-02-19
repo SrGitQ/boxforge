@@ -7,17 +7,16 @@ from boxforge.util import ElementInterface
 
 class PythonScript(ElementInterface):
     """Ignition python script, python 2.7 -- Jython 2.7"""
-    def __init__(self, script_path:str, name: Union[str, None] = "", metadata: Union[dict, None] = {}) -> None:
+    def __init__(self, path:str, name: Union[str, None] = "", metadata: Union[dict, None] = {}) -> None:
         self._data = {
-            "script_path": script_path,
+            "path": path,
             "name": name,
             "metadata": Metadata(metadata),
             "code":"",
             "resource":"",
         }
-
         self._validators = {
-            "script_path": self._script_path_validation,
+            "path": self._path_validation,
             "name": self._name_validation,
             "metadata": self._metadata_validation,
             "code": self._code_validation,
@@ -37,7 +36,7 @@ class PythonScript(ElementInterface):
         print(summary)
         return summary
     
-    def _script_path_validation(self, path: str) -> str:
+    def _path_validation(self, path: str) -> str:
         assert isinstance(path, str), f"{path} is not a string or path object"
         assert os.path.isfile(path), f"{path} is not a valid path for a file"
         assert path.endswith(".py"), f"{path} is not a python script"
@@ -45,15 +44,18 @@ class PythonScript(ElementInterface):
         return path
     
     @property
-    def script_path(self) -> str:
-        return self["script_path"]
+    def path(self) -> str:
+        return self["path"]
     
-    @script_path.setter
-    def script_path(self, path:str) -> None:
-        self._data["script_path"] = self._validate(key="script_path", value=path, data=self)
+    @path.setter
+    def path(self, path:str) -> None:
+        self._data["path"] = self._validate(key="path", value=path, data=self)
     
     def _name_validation(self, name:str) -> str:
         assert isinstance(name, str), f"{name} is not a string or path object"
+        if name == "":
+            script_filename = self.path.split("/")[-1]
+            name = script_filename.replace(".py", "")
 
         import re
         name_regex = r"[a-zA-Z0-9\_]"
@@ -69,8 +71,8 @@ class PythonScript(ElementInterface):
     @name.setter
     def name(self, name: str) -> None:
         if name == "":
-            script_filename = self.script_path.split("/")[-1]
-            name = script_filename.replace(".py", " ")
+            script_filename = self.path.split("/")[-1]
+            name = script_filename.replace(".py", "")
         self._data["name"] = self._validate(key="name", value=name, data=self)
 
     def _metadata_validation(self, metadata:dict) -> dict:
@@ -88,6 +90,7 @@ class PythonScript(ElementInterface):
     def _code_validation(self, path: str) -> str:
         # TODO: check if file is not binary
         # TOOD: test unicode scripts
+        path = self.path or path
         with open(path, "r") as file_script:
             return file_script.read()
     
@@ -97,13 +100,13 @@ class PythonScript(ElementInterface):
 
     @code.setter
     def code(self) -> None:
-        self._data["code"] = self._validate(key="code", value=self.script_path, data=self)
+        self._data["code"] = self._validate(key="code", value=self.path, data=self)
     
-    def _resource_validation(self, metadata: dict) -> dict:
-        return self.metadata.to_dict()
+    def _resource_validation(self, metadata: dict) -> str:
+        return self.metadata.dump()
     
     @property
-    def resource(self) -> dict:
+    def resource(self) -> str:
         return self["resource"]
     
     @resource.setter
@@ -122,3 +125,41 @@ class PythonModule(ElementInterface):
 
     def resume(self):
         ...
+
+"""
+
+** Ignition Python Script **
+:::name
+script
+::: code
+variable = 12
+
+::: resource
+{
+    "scope": "G",
+    "version": 1,
+    "restricted": false,
+    "overridable": true,
+    "files": [
+        "code.py"
+    ],
+    "attributes": {}
+}
+** Ignition Python Script **
+:::name
+script 
+::: code
+variable = 12
+
+::: resource
+{
+    "scope": "G",
+    "version": 1,
+    "restricted": false,
+    "overridable": true,
+    "files": [
+        "code.py"
+    ],
+    "attributes": {}
+}
+"""
