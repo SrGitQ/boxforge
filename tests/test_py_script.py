@@ -32,7 +32,7 @@ class TestPythonScript(unittest.TestCase):
 
     def test_python_script_forge_path(self):
         script = PythonScript(path=self.script_path)
-        script.forge("tmp/py_script/")
+        script.forge("tmp/py_script/", parent=True)
 
         code_path_validation = "tmp/py_script/code.py"
         resource_path_validation = "tmp/py_script/resource.json"
@@ -52,7 +52,7 @@ class TestPythonScript(unittest.TestCase):
 
     def test_python_script_forge(self):
         script = PythonScript(path=self.script_path)
-        script.forge("tmp/script")
+        script.forge("tmp/script", parent=True)
 
         code_path_validation = "tmp/script/code.py"
         resource_path_validation = "tmp/script/resource.json"
@@ -80,54 +80,53 @@ class TestPythonScript(unittest.TestCase):
                 shutil.rmtree(path)
 
 
-class TestPythonModule(unittest.TestCase):  # TODO
+class TestPythonModule(unittest.TestCase):
     def setUp(self) -> None:
-        self.module_path = "temp/NewModule"
         self.module_name = "NewModule"
         self.module_parent_path = "tmp/"
 
     def test_python_module_empty(self):
-        python_module = PythonModule(
-            name=self.module_name, path=self.module_parent_path, scripts=[]
-        )
+        python_module = PythonModule(name=self.module_name, scripts=[])
+
         test_resume = (
             """**Ignition Python Module**\n:::name\nNewModule\n:::content\n[]"""
         )
         self.assertEqual(python_module.resume(), test_resume)
-        python_module.forge()
+
+        python_module.forge(path=self.module_parent_path)
         if not os.path.isdir("tmp/NewModule"):
             raise FileNotFoundError
 
     def test_python_module_path_scripts(self):
         python_module = PythonModule(
-            name=self.module_name,
-            path=self.module_parent_path,
-            scripts=["script.py", "main.py"],
+            name=self.module_name, scripts=["tmp/script.py", "tmp/main.py"]
         )
-        test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n["script", "main"]"""
+
+        test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n['script', 'main']"""
         self.assertEqual(python_module.resume(), test_resume)
-        python_module.forge()
+
+        python_module.forge(path=self.module_parent_path)
         if not os.path.isdir("tmp/NewModule"):
             raise FileNotFoundError
 
     def test_python_module_PythonScript_objects(self):
-        script_1 = PythonScript(path="tmp/main.py")
-        script_2 = PythonScript(path="tmp/script.py")
+        script_1 = PythonScript(path="tmp/script.py")
+        script_2 = PythonScript(path="tmp/main.py")
         python_module = PythonModule(
-            name=self.module_name,
-            path=self.module_parent_path,
-            scripts=[script_1, script_2],
+            name=self.module_name, scripts=[script_1, script_2]
         )
-        test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n["script", "main"]"""
+
+        test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n['script', 'main']"""
         self.assertEqual(python_module.resume(), test_resume)
-        python_module.forge()
+
+        python_module.forge(path=self.module_parent_path)
         self.assertTrue(os.path.isdir("tmp/NewModule"))
         self.assertTrue(os.path.isdir("tmp/NewModule/script"))
-        self.assertTrue(os.path.isdir("tmp/NewModule/script/code.py"))
-        self.assertTrue(os.path.isdir("tmp/NewModule/script/resource.json"))
+        self.assertTrue(os.path.isfile("tmp/NewModule/script/code.py"))
+        self.assertTrue(os.path.isfile("tmp/NewModule/script/resource.json"))
         self.assertTrue(os.path.isdir("tmp/NewModule/main"))
-        self.assertTrue(os.path.isdir("tmp/NewModule/main/code.py"))
-        self.assertTrue(os.path.isdir("tmp/NewModule/main/resource.json"))
+        self.assertTrue(os.path.isfile("tmp/NewModule/main/code.py"))
+        self.assertTrue(os.path.isfile("tmp/NewModule/main/resource.json"))
 
     def tearDown(self) -> None:
         path_to_delete = [
@@ -135,4 +134,4 @@ class TestPythonModule(unittest.TestCase):  # TODO
         ]
         for path in path_to_delete:
             if os.path.isdir(path):
-                os.remove(path)
+                shutil.rmtree(path)

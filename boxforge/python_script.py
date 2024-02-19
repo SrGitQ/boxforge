@@ -1,6 +1,7 @@
 from typing import Union
 import pathlib
 import os
+import re
 
 from boxforge.metadata import Metadata
 from boxforge.util import ElementInterface
@@ -36,7 +37,7 @@ class PythonScript(ElementInterface):
             else:
                 return parent + "/" + child
         
-        if parent:
+        if not parent:
             launch_path = build_parent_child_path(path, self.name)
         else:
             launch_path = path
@@ -75,7 +76,6 @@ class PythonScript(ElementInterface):
     def _name_validation(self, name:str) -> str:
         assert isinstance(name, str), f"{name} is not a string or path object"
         if name:
-            import re
             name_regex = r"[a-zA-Z0-9\_]"
             if re.match(name_regex, name):
                 pass
@@ -143,13 +143,75 @@ class PythonScript(ElementInterface):
 
 
 class PythonModule(ElementInterface):
-    """Ignition python script, python 2.7 -- Jython 2.7"""
-    def __init__(self, name:str, script_path:str) -> None:
-        self._name = name
-        self._script_path = script_path
-    
-    def forge(self):
-        ...
+    """Ignition python module, python 2.7 -- Jython 2.7"""
+    def __init__(self, name:str, scripts: list = []) -> None:
+        self._data = {
+            "name": name,
+            "scripts": scripts,
+        }
 
-    def resume(self):
-        ...
+        self._validators = {
+            "name": self._name_validation,
+            "scripts": self._scripts_validation,
+        }
+
+        for key in self._data:
+            self._data[key] = self._validate(key=key, value=self._data[key], data=self._data)
+    
+    def forge(self, path: str) -> None:
+        module_path = pathlib.Path(path) / self.name
+        module_path.mkdir(parents=True, exist_ok=True)
+
+        for script in self.scripts:
+            script_path: pathlib.Path = module_path / script.name
+            script_path.mkdir(parents=True, exist_ok=True)
+            script.forge(str(script_path), parent=True)
+
+    def resume(self) -> str:
+        content = [script.name for script in self.scripts]
+        summary_text = f"""**Ignition Python Module**\n:::name\n{self.name}\n:::content\n{content}"""
+        
+        print(summary_text)
+        return summary_text
+
+    def _name_validation(self, name: str) -> str:
+        assert isinstance(name, str), f"{name} is not a valid string"
+        name_regex = r"[a-zA-Z0-9\_]"
+        if re.match(name_regex, name):
+            pass
+        else:
+            raise Exception(f"{name} is not a valid name")
+        return name
+    
+    @property
+    def name(self) -> str:
+        return self["name"]
+    
+    @name.setter
+    def name(self, name: str) -> None:
+        self._data["name"] = self._validate(key="name", value=name, data=self)
+
+    def _scripts_validation(self, scripts: list) -> list:
+        formeted_scripts = []
+        for script in scripts:
+            if isinstance(script, str):
+                try:
+                    script_instance = PythonScript(path=script)
+                    formeted_scripts.append(script_instance)
+                except:
+                    print(f"Warning: {script} is not a valid path for PythonScript")
+                    pass
+            elif isinstance(script, PythonScript):
+                formeted_scripts.append(script)
+            else:
+                pass
+
+        return formeted_scripts
+    
+    @property
+    def scripts(self) -> list[PythonScript]:
+        return self["scripts"]
+    
+    @scripts.setter
+    def scripts(self, scripts: list) -> None:
+        self._data["scripts"] = self._validate(key="scripts", value=scripts, data=self)
