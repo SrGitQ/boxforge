@@ -11,7 +11,7 @@ class PythonScript(ElementInterface):
         self._data = {
             "script_path": script_path,
             "name": name,
-            "metadata": metadata,
+            "metadata": Metadata(metadata),
             "code":"",# TODO: code cast
             "resource":"" # TODO resource cast
         }
@@ -21,6 +21,8 @@ class PythonScript(ElementInterface):
             "name": self._name_validation,
             "metadata": self._metadata_validation
         }
+
+        self.metadata["files"] = ["code.py"]
 
         for key in self._data:
             self._data[key] = self._validate(key=key, value=self._data[key], data=self._data)
@@ -70,6 +72,7 @@ class PythonScript(ElementInterface):
         self._data["name"] = self._validate(key="name", value=name, data=self)
 
     def _metadata_validation(self, metadata:dict) -> dict:
+        assert metadata["files"] == ["code.py"], f"{metadata} is invalid for python script"
         return Metadata(metadata)
     
     @property
