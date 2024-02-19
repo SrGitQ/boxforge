@@ -21,6 +21,8 @@ class ElementInterface:
         # for each validator you have to declare in `self._validators` `dict`
         self._validators = {}
 
+        # Custom attributes should be declared after `data` and `validators`...
+
     def forge(self) -> None:
         """Forge must build the Element content"""
         # forge return None, but it can return `bool` for error handling
@@ -55,3 +57,14 @@ class ElementInterface:
 
     def __len__(self) -> int:
         return len(self._data)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        try:
+            if name not in ["_validators", "_data"]:
+                if name not in self._data:
+                    print(f"WARNING: `{name}: {value}`, unknown property")
+            
+            object.__setattr__(self, name, value)
+        except Exception as e:
+            print("check if you are declaring your attribute above `_validators` and `_data`, see boxforge>util>ElementInterface class")
+            raise(e)
