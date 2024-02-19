@@ -1,6 +1,7 @@
 from typing import Union
 import pathlib
 import os
+import re
 
 from boxforge.metadata import Metadata
 from boxforge.util import ElementInterface
@@ -75,7 +76,6 @@ class PythonScript(ElementInterface):
     def _name_validation(self, name:str) -> str:
         assert isinstance(name, str), f"{name} is not a string or path object"
         if name:
-            import re
             name_regex = r"[a-zA-Z0-9\_]"
             if re.match(name_regex, name):
                 pass
@@ -143,13 +143,65 @@ class PythonScript(ElementInterface):
 
 
 class PythonModule(ElementInterface):
-    """Ignition python script, python 2.7 -- Jython 2.7"""
-    def __init__(self, name:str, script_path:str) -> None:
-        self._name = name
-        self._script_path = script_path
+    """Ignition python module, python 2.7 -- Jython 2.7"""
+    def __init__(self, name:str, scripts: list = []) -> None:
+        self._data = {
+            "name": name,
+            "scripts": scripts,
+        }
+
+        self._validators = {
+            "name": self._name_validation,
+            "scripts": self._scripts_validation,
+        }
+
+        for key in self._data:
+            self._data[key] = self._validate(key=key, value=self._data[key], data=self._data)
     
     def forge(self):
         ...
 
     def resume(self):
         ...
+
+    def _name_validation(self, name: str) -> str:
+        assert isinstance(name, str), f"{name} is not a valid string"
+        name_regex = r"[a-zA-Z0-9\_]"
+        if re.match(name_regex, name):
+            pass
+        else:
+            raise Exception(f"{name} is not a valid name")
+        return name
+    
+    @property
+    def name(self) -> str:
+        return self["name"]
+    
+    @name.setter
+    def name(self, name: str) -> None:
+        self._data["name"] = self._validate(key="name", value=name, data=self)
+
+    def _scripts_validation(self, scripts: list) -> list:
+        formeted_scripts = []
+        for script in scripts:
+            if isinstance(script, str):
+                try:
+                    script_instance = PythonScript(path=script)
+                    formeted_scripts.append(script_instance)
+                except:
+                    print(f"Warning: {script} is not a valid path for PythonScript")
+                    pass
+            elif isinstance(script, PythonScript):
+                formeted_scripts.append(script)
+            else:
+                pass
+
+        return formeted_scripts
+    
+    @property
+    def scripts(self) -> list:
+        return self["scripts"]
+    
+    @scripts.setter
+    def scripts(self, scripts: list) -> None:
+        self._data["scripts"] = self._validate(key="scripts", value=scripts, data=self)
