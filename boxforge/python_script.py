@@ -1,4 +1,5 @@
 from typing import Union
+import pathlib
 import os
 
 from boxforge.metadata import Metadata
@@ -28,8 +29,25 @@ class PythonScript(ElementInterface):
         for key in self._data:
             self._data[key] = self._validate(key=key, value=self._data[key], data=self._data)
     
-    def forge(self):
-        ...
+    def forge(self, path: str, parent: bool = False) -> None:
+        def build_parent_child_path(parent: str, child: str) -> str:
+            if parent.endswith("/"):
+                return parent + child
+            else:
+                return parent + "/" + child
+        
+        if parent:
+            launch_path = build_parent_child_path(path, self.name)
+        else:
+            launch_path = path
+        
+        script_dirpath = pathlib.Path(launch_path)
+        script_dirpath.mkdir(parents=True, exist_ok=True)
+
+        self.metadata.forge(str(script_dirpath))
+
+        with open(script_dirpath / "code.py", "w") as file:
+            file.write(self.code)
 
     def resume(self) -> str:
         summary: str = f"""** Ignition Python Script **\n:::name\n{self.name}\n::: code\n{self.code}\n::: resource\n{self.resource}"""
@@ -135,41 +153,3 @@ class PythonModule(ElementInterface):
 
     def resume(self):
         ...
-
-"""
-
-** Ignition Python Script **
-:::name
-script
-::: code
-variable = 12
-
-::: resource
-{
-    "scope": "G",
-    "version": 1,
-    "restricted": false,
-    "overridable": true,
-    "files": [
-        "code.py"
-    ],
-    "attributes": {}
-}
-** Ignition Python Script **
-:::name
-script 
-::: code
-variable = 12
-
-::: resource
-{
-    "scope": "G",
-    "version": 1,
-    "restricted": false,
-    "overridable": true,
-    "files": [
-        "code.py"
-    ],
-    "attributes": {}
-}
-"""

@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from boxforge import PythonScript, PythonModule
 
@@ -36,7 +37,7 @@ class TestPythonScript(unittest.TestCase):
         code_path_validation = "tmp/py_script/code.py"
         resource_path_validation = "tmp/py_script/resource.json"
         code_validation = "variable = 12\n"
-        resource_validation = """{\n    "scope": "G",\n    "version": 1,\n    "restricted": False,\n    "overridable": True,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {},\n}"""
+        resource_validation = """{\n    "scope": "G",\n    "version": 1,\n    "restricted": false,\n    "overridable": true,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {}\n}"""
         if os.path.isfile(code_path_validation):
             with open(code_path_validation, "r") as file:
                 self.assertEqual(file.read(), code_validation)
@@ -51,12 +52,12 @@ class TestPythonScript(unittest.TestCase):
 
     def test_python_script_forge(self):
         script = PythonScript(path=self.script_path)
-        script.forge()
+        script.forge("tmp/script")
 
         code_path_validation = "tmp/script/code.py"
         resource_path_validation = "tmp/script/resource.json"
         code_validation = "variable = 12\n"
-        resource_validation = """{\n    "scope": "G",\n    "version": 1,\n    "restricted": False,\n    "overridable": True,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {},\n}"""
+        resource_validation = """{\n    "scope": "G",\n    "version": 1,\n    "restricted": false,\n    "overridable": true,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {}\n}"""
         if os.path.isfile(code_path_validation):
             with open(code_path_validation, "r") as file:
                 self.assertEqual(file.read(), code_validation)
@@ -76,7 +77,7 @@ class TestPythonScript(unittest.TestCase):
         ]
         for path in path_to_delete:
             if os.path.isdir(path):
-                os.remove(path)
+                shutil.rmtree(path)
 
 
 class TestPythonModule(unittest.TestCase):  # TODO
