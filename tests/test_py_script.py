@@ -22,7 +22,7 @@ class TestPythonScript(unittest.TestCase):
         self.assertEqual(resume_test, script.resume())
 
     def test_python_script_string(self):
-        resume_test = """** Ignition Python Script **\n:::name\nscript\n::: code\nvariable = 14\n\n::: resource\n{\n    "scope": "G",\n    "version": 1,\n    "restricted": False,\n    "overridable": True,\n    "files": [],\n    "attributes": {},\n}"""
+        resume_test = """** Ignition Python Script **\n:::name\n\n::: code\nvariable = 14\n::: resource\n{\n    "scope": "G",\n    "version": 1,\n    "restricted": false,\n    "overridable": true,\n    "files": [\n        "code.py"\n    ],\n    "attributes": {}\n}"""
 
         code = """variable = 14"""
         script = PythonScript(code=code)

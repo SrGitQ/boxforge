@@ -7,13 +7,13 @@ from boxforge.util import ElementInterface
 
 class PythonScript(ElementInterface):
     """Ignition python script, python 2.7 -- Jython 2.7"""
-    def __init__(self, path:str, name: Union[str, None] = "", metadata: Union[dict, None] = {}) -> None:
+    def __init__(self, path:str = "", name: Union[str, None] = "", metadata: Union[dict, None] = {}, code: str = "") -> None:
         self._data = {
             "path": path,
             "name": name,
             "metadata": Metadata(metadata),
-            "code":"",
-            "resource":"",
+            "code": code,
+            "resource": "",
         }
         self._validators = {
             "path": self._path_validation,
@@ -37,6 +37,9 @@ class PythonScript(ElementInterface):
         return summary
     
     def _path_validation(self, path: str) -> str:
+        if path == "":
+            print("Warning: no path given")
+            return path
         assert isinstance(path, str), f"{path} is not a string or path object"
         assert os.path.isfile(path), f"{path} is not a valid path for a file"
         assert path.endswith(".py"), f"{path} is not a python script"
@@ -53,16 +56,21 @@ class PythonScript(ElementInterface):
     
     def _name_validation(self, name:str) -> str:
         assert isinstance(name, str), f"{name} is not a string or path object"
-        if name == "":
+        if name:
+            import re
+            name_regex = r"[a-zA-Z0-9\_]"
+            if re.match(name_regex, name):
+                pass
+            else:
+                raise Exception(f"{name} is not a valid name")
+        elif self.path:
             script_filename = self.path.split("/")[-1]
             name = script_filename.replace(".py", "")
-
-        import re
-        name_regex = r"[a-zA-Z0-9\_]"
-        if re.match(name_regex, name):
-            return name
         else:
-            raise TypeError
+            print("Warning: no name given")
+            pass
+
+        return name
 
     @property
     def name(self) -> str:
@@ -87,20 +95,22 @@ class PythonScript(ElementInterface):
     def metadata(self, metadata: dict) -> None:
         self._data["metadata"] = self._validate(key="metadata", value=metadata, data=self)
 
-    def _code_validation(self, path: str) -> str:
+    def _code_validation(self, code: str) -> str:
         # TODO: check if file is not binary
         # TOOD: test unicode scripts
-        path = self.path or path
-        with open(path, "r") as file_script:
-            return file_script.read()
+        if not code:
+            with open(self.path, "r") as file_script:
+                return file_script.read()
+        else:
+            return code
     
     @property
     def code(self) -> str:
         return self["code"]
 
     @code.setter
-    def code(self) -> None:
-        self._data["code"] = self._validate(key="code", value=self.path, data=self)
+    def code(self, code:str) -> None:
+        self._data["code"] = self._validate(key="code", value=code, data=self)
     
     def _resource_validation(self, metadata: dict) -> str:
         return self.metadata.dump()
