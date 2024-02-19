@@ -64,6 +64,9 @@ class PythonScript(ElementInterface):
     
     @name.setter
     def name(self, name: str) -> None:
+        if name == "":
+            script_filename = self.script_path.split("/")[-1]
+            name = script_filename.replace(".py", " ")
         self._data["name"] = self._validate(key="name", value=name, data=self)
 
     def _metadata_validation(self, metadata:dict) -> dict:
