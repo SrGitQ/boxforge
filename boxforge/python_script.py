@@ -37,7 +37,7 @@ class PythonScript(ElementInterface):
             else:
                 return parent + "/" + child
         
-        if parent:
+        if not parent:
             launch_path = build_parent_child_path(path, self.name)
         else:
             launch_path = path
@@ -158,8 +158,14 @@ class PythonModule(ElementInterface):
         for key in self._data:
             self._data[key] = self._validate(key=key, value=self._data[key], data=self._data)
     
-    def forge(self):
-        ...
+    def forge(self, path: str) -> None:
+        module_path = pathlib.Path(path) / self.name
+        module_path.mkdir(parents=True, exist_ok=True)
+
+        for script in self.scripts:
+            script_path: pathlib.Path = module_path / script.name
+            script_path.mkdir(parents=True, exist_ok=True)
+            script.forge(str(script_path), parent=True)
 
     def resume(self) -> str:
         content = [script.name for script in self.scripts]
@@ -203,7 +209,7 @@ class PythonModule(ElementInterface):
         return formeted_scripts
     
     @property
-    def scripts(self) -> list:
+    def scripts(self) -> list[PythonScript]:
         return self["scripts"]
     
     @scripts.setter
