@@ -34,6 +34,7 @@ class PythonScript(ElementInterface):
         return summary
     
     def _script_path_validation(self, path: str) -> str:
+        assert isinstance(path, str), f"{path} is not a string or path object"
         assert os.path.isfile(path), f"{path} is not a valid path for a file"
         assert path.endswith(".py"), f"{path} is not a python script"
 
