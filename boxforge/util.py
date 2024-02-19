@@ -26,7 +26,7 @@ class ElementInterface:
     def forge(self) -> None:
         """Forge must build the Element content"""
         # forge return None, but it can return `bool` for error handling
-        ...
+        print("This class do not have forge method declared")
 
     def resume(self) -> str:
         """Resume must print a short summary of the current element"""
