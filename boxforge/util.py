@@ -32,7 +32,7 @@ class ElementInterface:
         """Resume must print a short summary of the current element"""
         # Resume should return a string with the whole summary.
         # It should print the same summary build too
-        ...
+        print("This class do not have resume method declared")
 
     def _validate(self, key: str, value: Any, data: dict = {}) -> Any:
         if key not in data:
