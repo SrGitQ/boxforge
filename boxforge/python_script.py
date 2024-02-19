@@ -161,8 +161,12 @@ class PythonModule(ElementInterface):
     def forge(self):
         ...
 
-    def resume(self):
-        ...
+    def resume(self) -> str:
+        content = [script.name for script in self.scripts]
+        summary_text = f"""**Ignition Python Module**\n:::name\n{self.name}\n:::content\n{content}"""
+        
+        print(summary_text)
+        return summary_text
 
     def _name_validation(self, name: str) -> str:
         assert isinstance(name, str), f"{name} is not a valid string"
