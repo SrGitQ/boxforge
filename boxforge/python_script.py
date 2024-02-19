@@ -63,7 +63,7 @@ class PythonScript(ElementInterface):
         return self["name"]
     
     @name.setter
-    def name(self, name: str) -> name:
+    def name(self, name: str) -> None:
         self._data["name"] = self._validate(key="name", value=name, data=self)
 
 
