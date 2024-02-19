@@ -1,4 +1,5 @@
 from typing import Union
+import os
 
 from boxforge.metadata import Metadata
 from boxforge.util import ElementInterface
@@ -27,6 +28,20 @@ class PythonScript(ElementInterface):
 
     def resume(self):
         ...
+    
+    def _script_path_validation(self, path: str) -> str:
+        assert os.path.isfile(path), f"{path} is not a valid path for a file"
+        assert path.endswith(".py"), f"{path} is not a python script"
+
+        return path
+    
+    @property
+    def script_path(self) -> str:
+        return self["script_path"]
+    
+    @script_path.setter
+    def script_path(self, path:str) -> None:
+        self._data["script_path"] = self._validate(key="script_path", value=path, data=self)
 
 
 class PythonModule(ElementInterface):
