@@ -32,16 +32,18 @@ class ElementInterface:
         # It should print the same summary build too
         ...
 
-    def _validate(self, data, key, value) -> Any:
-        assert key in data, f"{key} is not an attribute of {self.__class__}"
-
+    def _validate(self, key: str, value: Any, data: dict = {}) -> Any:
+        if key not in data:
+            # TODO: Improve this message
+            print(f"WARNING: `{key}: {value}`, unknown property")
+            return value
         return self._validators[key](value)
 
     def __getitem__(self, key: str) -> Any:
         return self._data[key]
 
-    def __setitem__(self, key, value) -> None:
-        self._data[key] = self._validate(self._data, key, value)
+    def __setitem__(self, key: str, value: Any) -> None:
+        self._data[key] = self._validate(key=key, value=value, data=self._data)
 
     def __delitem__(self, key) -> None:
         # Delete an item is not a recommended method, but you can use this if you
