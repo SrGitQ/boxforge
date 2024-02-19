@@ -12,6 +12,8 @@ class PythonScript(ElementInterface):
             "script_path": script_path,
             "name": name,
             "metadata": metadata,
+            "code":"",# TODO: code cast
+            "resource":"" # TODO resource cast
         }
 
         self._validators = {
@@ -26,8 +28,10 @@ class PythonScript(ElementInterface):
     def forge(self):
         ...
 
-    def resume(self):
-        ...
+    def resume(self) -> str:
+        summary: str = f"""** Ignition Python Script **\n:::name\n{self.name}\n::: code\n{self.code}\n::: resource\n{self.resource}"""
+        print(summary)
+        return summary
     
     def _script_path_validation(self, path: str) -> str:
         assert os.path.isfile(path), f"{path} is not a valid path for a file"
