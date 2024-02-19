@@ -1,8 +1,8 @@
 from boxforge.metadata import Metadata
+from boxforge.util import ElementInterface
 
 
-# TODO: implement a interface class for Ignition elements
-class PythonScript:
+class PythonScript(ElementInterface):
     """Ignition python script, python 2.7 -- Jython 2.7"""
     def __init__(self, name:str, script_path:str, metadata: Metadata) -> None:
         self._name = name
@@ -16,7 +16,7 @@ class PythonScript:
         ...
 
 
-class PythonModule:
+class PythonModule(ElementInterface):
     """Ignition python script, python 2.7 -- Jython 2.7"""
     def __init__(self, name:str, script_path:str) -> None:
         self._name = name
