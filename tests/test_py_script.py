@@ -82,45 +82,40 @@ class TestPythonScript(unittest.TestCase):
 
 class TestPythonModule(unittest.TestCase):  # TODO
     def setUp(self) -> None:
-        self.module_path = "temp/NewModule"
         self.module_name = "NewModule"
         self.module_parent_path = "tmp/"
 
     def test_python_module_empty(self):
-        python_module = PythonModule(
-            name=self.module_name, path=self.module_parent_path, scripts=[]
-        )
+        python_module = PythonModule(name=self.module_name, scripts=[])
+
         test_resume = (
             """**Ignition Python Module**\n:::name\nNewModule\n:::content\n[]"""
         )
         self.assertEqual(python_module.resume(), test_resume)
-        python_module.forge()
+
+        python_module.forge(path=self.module_parent_path)
         if not os.path.isdir("tmp/NewModule"):
             raise FileNotFoundError
 
     def test_python_module_path_scripts(self):
-        python_module = PythonModule(
-            name=self.module_name,
-            path=self.module_parent_path,
-            scripts=["script.py", "main.py"],
-        )
+        python_module = PythonModule(name=self.module_name, scripts=["script.py", "main.py"])
+
         test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n["script", "main"]"""
         self.assertEqual(python_module.resume(), test_resume)
-        python_module.forge()
+
+        python_module.forge(path=self.module_parent_path)
         if not os.path.isdir("tmp/NewModule"):
             raise FileNotFoundError
 
     def test_python_module_PythonScript_objects(self):
         script_1 = PythonScript(path="tmp/main.py")
         script_2 = PythonScript(path="tmp/script.py")
-        python_module = PythonModule(
-            name=self.module_name,
-            path=self.module_parent_path,
-            scripts=[script_1, script_2],
-        )
+        python_module = PythonModule(name=self.module_name, scripts=[script_1, script_2])
+
         test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n["script", "main"]"""
         self.assertEqual(python_module.resume(), test_resume)
-        python_module.forge()
+
+        python_module.forge(path=self.module_parent_path)
         self.assertTrue(os.path.isdir("tmp/NewModule"))
         self.assertTrue(os.path.isdir("tmp/NewModule/script"))
         self.assertTrue(os.path.isdir("tmp/NewModule/script/code.py"))
