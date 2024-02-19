@@ -12,7 +12,7 @@ class PythonScript(ElementInterface):
             "script_path": script_path,
             "name": name,
             "metadata": Metadata(metadata),
-            "code":"",# TODO: code cast
+            "code":"",
             "resource":"" # TODO resource cast
         }
 
@@ -82,6 +82,21 @@ class PythonScript(ElementInterface):
     @metadata.setter
     def metadata(self, metadata: dict) -> None:
         self._data["metadata"] = self._validate(key="metadata", value=metadata, data=self)
+
+    def _code_validation(self, path) -> str:
+        # TODO: check if file is not binary
+        # TOOD: test unicode scripts
+        with open(path, "r") as file_script:
+            return file_script.read()
+    
+    @property
+    def code(self) -> str:
+        return self["code"]
+
+    @code.setter
+    def code(self) -> None:
+        self._data["code"] = self._validate(key="code", value=self.script_path, data=self)
+
 
 
 class PythonModule(ElementInterface):
