@@ -13,13 +13,15 @@ class PythonScript(ElementInterface):
             "name": name,
             "metadata": Metadata(metadata),
             "code":"",
-            "resource":"" # TODO resource cast
+            "resource":"",
         }
 
         self._validators = {
             "script_path": self._script_path_validation,
             "name": self._name_validation,
-            "metadata": self._metadata_validation
+            "metadata": self._metadata_validation,
+            "code": self._code_validation,
+            "resource": self._resource_validation,
         }
 
         self.metadata["files"] = ["code.py"]
@@ -76,14 +78,14 @@ class PythonScript(ElementInterface):
         return Metadata(metadata)
     
     @property
-    def metadata(self) -> dict:
+    def metadata(self) -> Metadata:
         return self["metadata"]
     
     @metadata.setter
     def metadata(self, metadata: dict) -> None:
         self._data["metadata"] = self._validate(key="metadata", value=metadata, data=self)
 
-    def _code_validation(self, path) -> str:
+    def _code_validation(self, path: str) -> str:
         # TODO: check if file is not binary
         # TOOD: test unicode scripts
         with open(path, "r") as file_script:
@@ -96,7 +98,17 @@ class PythonScript(ElementInterface):
     @code.setter
     def code(self) -> None:
         self._data["code"] = self._validate(key="code", value=self.script_path, data=self)
-
+    
+    def _resource_validation(self, metadata: dict) -> dict:
+        return self.metadata.to_dict()
+    
+    @property
+    def resource(self) -> dict:
+        return self["resource"]
+    
+    @resource.setter
+    def resource(self, resource: dict) -> None:
+        self._data["resource"] = self._validate(key="resource", value=resource, data=self)
 
 
 class PythonModule(ElementInterface):
