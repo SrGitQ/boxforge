@@ -2,22 +2,13 @@ import json
 import pathlib
 
 from boxforge.definitions import Ignition
+from boxforge.util import ElementInterface
 
 from typing import Any
 
 
-class Metadata:
+class Metadata(ElementInterface):
     """Metadata ignition project resource"""
-
-    __slots__ = [
-        "_scope",
-        "_version",
-        "_restricted",
-        "_overridable",
-        "_files",
-        "_attributes",
-        "_data",
-    ]
 
     def __init__(self, metadata: dict = {}) -> None:
         if not metadata:
@@ -31,23 +22,26 @@ class Metadata:
             }
 
             metadata = deafult_metadata
-        
-        self._scope = self._scope_validation(metadata["scope"])
-        self._version = self._version_validation(metadata["version"])
-        self._restricted = self._restricted_validation(metadata["restricted"])
-        self._overridable = self._overridable_validation(metadata["overridable"])
-        self._files = self._files_validation(metadata["files"])
-        # TODO: attributes must be their own constructor and tests
-        self._attributes = self._attributes_validation(metadata["attributes"])
+
+        self._validators = {
+            "scope": self._scope_validation,
+            "version": self._version_validation,
+            "restricted": self._restricted_validation,
+            "overridable": self._overridable_validation,
+            "files": self._files_validation,
+            "attributes": self._attributes_validation,
+        }
 
         self._data = {
-            "scope": self.scope,
-            "version": self.version,
-            "restricted": self.restricted,
-            "overridable": self.overridable,
-            "files": self.files,
-            "attributes": self.attributes,
+            "scope": metadata["scope"],
+            "version": metadata["version"],
+            "restricted": metadata["restricted"],
+            "overridable": metadata["overridable"],
+            "files": metadata["files"],
+            "attributes": metadata["attributes"],
         }
+        for key in self._data:
+            self._data[key] = self._validate(key=key, value=self._data[key], data=self._data)
 
     def forge(self, path: str) -> None:
         """Build resource.json given the path
@@ -79,22 +73,6 @@ class Metadata:
         """Convert to dict"""
         return self._data
 
-    def __getitem__(self, key: str) -> Any:
-        return self._data[key]
-
-    def __setitem__(self, key, value) -> None:
-        self.__setattr__(key, value)
-        self._data[key] = value
-
-    def __delitem__(self, key) -> None:
-        return
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def __len__(self):
-        return len(self._data)
-
     def _scope_validation(self, scope: str) -> str:
         assert isinstance(scope, str), f"Scope is not an string object: {scope}"
         assert len(scope) == 1, f"Scope is larger or shorter than single char: {scope}"
@@ -105,11 +83,11 @@ class Metadata:
 
     @property
     def scope(self) -> str:
-        return self._scope
+        return self["scope"]
 
     @scope.setter
     def scope(self, value: str) -> None:
-        self._scope = self._scope_validation(value)
+        self._data["scope"] = self._validate(key="scope", value=value, data=self)
 
     def _version_validation(self, version: int) -> int:
         assert isinstance(version, int), f"{version} is not integer value"
@@ -121,11 +99,11 @@ class Metadata:
 
     @property
     def version(self) -> int:
-        return self._version
+        return self["version"]
 
     @version.setter
     def version(self, value: int) -> None:
-        self._version = self._version_validation(value)
+        self._data["version"] = self._validate(key="version", value=value, data=self)
 
     def _restricted_validation(self, restricted: bool) -> bool:
         assert isinstance(
@@ -136,11 +114,11 @@ class Metadata:
 
     @property
     def restricted(self) -> bool:
-        return self._restricted
+        return self["restricted"]
 
     @restricted.setter
     def restricted(self, value: bool) -> None:
-        self._restricted = self._restricted_validation(value)
+        self._data["restricted"] = self._validate(key="restricted", value=value, data=self)
 
     def _overridable_validation(self, overridable: bool) -> bool:
         assert isinstance(
@@ -151,11 +129,11 @@ class Metadata:
 
     @property
     def overridable(self) -> bool:
-        return self._overridable
+        return self["overridable"]
 
     @overridable.setter
     def overridable(self, value: bool) -> None:
-        self._overridable = self._overridable_validation(value)
+        self._data["overridable"] = self._validate(key="overridable", value=value, data=self)
 
     def _files_validation(self, files: list) -> list:
         assert isinstance(files, list), f"{files} is not a list object"
@@ -170,21 +148,22 @@ class Metadata:
 
     @property
     def files(self) -> list:
-        return self._files
+        return self["files"]
 
     @files.setter
     def files(self, value: list) -> None:
-        self._files = self._files_validation(value)
+        self._data["files"] = self._validate(key="files", value=value, data=self)
 
     def _attributes_validation(self, attributes: dict) -> dict:
+        # TODO: attributes must be their own constructor and tests
         assert isinstance(attributes, dict), f"{attributes} is not dict object"
 
         return attributes
 
     @property
     def attributes(self) -> dict:
-        return self._attributes
+        return self["attributes"]
 
     @attributes.setter
     def attributes(self, value) -> None:
-        self._attributes = self._attributes_validation(value)
+        self._data["attributes"] = self._validate(key="attributes", value=value, data=self)
