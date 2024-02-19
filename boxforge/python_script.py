@@ -66,6 +66,17 @@ class PythonScript(ElementInterface):
     def name(self, name: str) -> None:
         self._data["name"] = self._validate(key="name", value=name, data=self)
 
+    def _metadata_validation(self, metadata:dict) -> dict:
+        return Metadata(metadata)
+    
+    @property
+    def metadata(self) -> dict:
+        return self["metadata"]
+    
+    @metadata.setter
+    def metadata(self, metadata: dict) -> None:
+        self._data["metadata"] = self._validate(key="metadata", value=metadata, data=self)
+
 
 class PythonModule(ElementInterface):
     """Ignition python script, python 2.7 -- Jython 2.7"""
