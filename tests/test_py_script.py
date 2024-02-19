@@ -135,4 +135,4 @@ class TestPythonModule(unittest.TestCase):  # TODO
         ]
         for path in path_to_delete:
             if os.path.isdir(path):
-                os.remove(path)
+                shutil.rmtree(path)
