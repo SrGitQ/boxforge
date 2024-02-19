@@ -80,7 +80,7 @@ class TestPythonScript(unittest.TestCase):
                 shutil.rmtree(path)
 
 
-class TestPythonModule(unittest.TestCase):  # TODO
+class TestPythonModule(unittest.TestCase):
     def setUp(self) -> None:
         self.module_name = "NewModule"
         self.module_parent_path = "tmp/"
@@ -98,7 +98,9 @@ class TestPythonModule(unittest.TestCase):  # TODO
             raise FileNotFoundError
 
     def test_python_module_path_scripts(self):
-        python_module = PythonModule(name=self.module_name, scripts=["script.py", "main.py"])
+        python_module = PythonModule(
+            name=self.module_name, scripts=["script.py", "main.py"]
+        )
 
         test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n["script", "main"]"""
         self.assertEqual(python_module.resume(), test_resume)
@@ -110,7 +112,9 @@ class TestPythonModule(unittest.TestCase):  # TODO
     def test_python_module_PythonScript_objects(self):
         script_1 = PythonScript(path="tmp/main.py")
         script_2 = PythonScript(path="tmp/script.py")
-        python_module = PythonModule(name=self.module_name, scripts=[script_1, script_2])
+        python_module = PythonModule(
+            name=self.module_name, scripts=[script_1, script_2]
+        )
 
         test_resume = """**Ignition Python Module**\n:::name\nNewModule\n:::content\n["script", "main"]"""
         self.assertEqual(python_module.resume(), test_resume)
